@@ -13,7 +13,6 @@ on:
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   PYTHON_VERSION: '3.11' # set this to the python version to use (supports 3.6, 3.7, 3.8)
-  POETRY_VERSION: '1.8.2'
 
 jobs:
   build:
@@ -27,24 +26,38 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 'Set up poetry'
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: ${{ env.POETRY_VERSION }}
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-
+    
       - name: Enable caching
         uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
 
+ 
       - name: Set up Python
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install the project
         run: uv sync --all-extras --dev
+    
+      - name: Pip freeze
+        run: pip freeze > requirements.txt
+
+      - name: Remove venv
+        run: rm -rf venv
+
+      - name: Create venv
+        run: python -m venv venv
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
       # Optional: Add step to run tests here
 
       - name: Zip artifact for deployment

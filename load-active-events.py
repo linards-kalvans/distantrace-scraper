@@ -172,7 +172,10 @@ def write_to_db(results: pd.DataFrame) -> None:
             session.merge(Results(**row))
         session.commit()
 
-if __name__ == "__main__":
+def main() -> None:
     session = requests.Session()
     results = get_all_data(session)
     write_to_db(results)
+
+if __name__ == "__main__":
+    main()

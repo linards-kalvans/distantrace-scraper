@@ -14,3 +14,9 @@ def timer_trigger(myTimer: func.TimerRequest) -> None:
     load_active_events()
 
     logging.info('Python timer trigger function executed.')
+
+@app.function_name(name="HttpTrigger1")
+@app.route(route="req")
+def main(req: func.HttpRequest) -> str:
+    user = req.params.get("user")
+    return f"Hello, {user}!"
